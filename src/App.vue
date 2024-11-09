@@ -1,22 +1,17 @@
-<script setup lang="ts">
+<script lang="ts">
   import { defineComponent } from 'vue';
-  import HelloWorld from './components/HelloWorld/HelloWorld.vue'
+  import MainWrapper from "./components/MainWrapper/MainWrapper.vue"
 
   export default defineComponent({
     components: {
-      HelloWorld
-    },
-    data() {
-      return {
-        title: "title"
-      }
+      MainWrapper
     }
   })
 </script>
 
 <template>
   <main>
-  
+    <MainWrapper />
   </main>
 </template>
 

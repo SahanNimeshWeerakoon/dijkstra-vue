@@ -9,6 +9,6 @@
         name: 'Result',
         props: {},
     });
-<script>
+</script>
 <style scoped>
 </style>
