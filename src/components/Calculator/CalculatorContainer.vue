@@ -1,7 +1,7 @@
 <template>
   <div class="calculator-container">
     <div class="calculator-form-wrapper">
-      <button class="calculator-container-random-button">
+      <button class="calculator-container-random-button" @click="getRandomNode">
         <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" />
       </button>
       <CalculatorForm
@@ -26,11 +26,13 @@
   </div>
 </template>
 <script lang="ts">
+import axios from 'axios'
 import { defineComponent, ref, watch } from "vue";
-import CalculatorForm from "./CalculatorForm.vue";
-import ResultPlaceholder from "./ResultPlaceholder.vue";
+
 import Result from "./Result.vue";
+import CalculatorForm from "./CalculatorForm.vue";
 import { dijkstra } from "../../utils/dijkstra.js";
+import ResultPlaceholder from "./ResultPlaceholder.vue";
 
 // TODO - get this interface to seperate file
 interface DijkstraResult {
@@ -67,6 +69,18 @@ export default defineComponent({
       result.value = dijkstra(startNode.value, targetNode.value);
     };
 
+    const getRandomNode = async () => {
+      const startNodeReq = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=26');
+      const targetNodeReq = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=26');
+
+      Promise
+        .all([startNodeReq, targetNodeReq])
+        .then(([startNodeRes, targetNodeRes]) => {
+          startNode.value = ""+startNodeRes.data;
+          targetNode.value = ""+targetNodeRes.data;
+        });
+    }
+
     const clear = () => {
         result.value= { distance: null, path: null }
         startNode.value = "";
@@ -79,6 +93,7 @@ export default defineComponent({
       result,
       startNode,
       targetNode,
+      getRandomNode,
       findShortestPath,
     };
   },
