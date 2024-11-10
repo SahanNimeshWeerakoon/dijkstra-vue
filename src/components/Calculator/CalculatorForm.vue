@@ -1,5 +1,8 @@
 <template>
   <div class="calculator-form">
+    <button class="calculator-container-random-button" @click="getRandomNode">
+      <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" />
+    </button>
     <p class="calculator-form-title">Select Path</p>
     <form>
       <div class="calculator-form-input-wrapper">
@@ -44,8 +47,10 @@ import {
     type Ref,
     type SetupContext,
 } from 'vue';
+import axios from 'axios'
 import CustomDropdown from '../CustomDropdown/CustomDropdown.vue'
 import { ListItem } from '../CustomDropdown/types.ts'
+import { getNodeFromNumber } from '../../utils/common.js'
 
 // TODO - get this interface to seperate file
 interface DijkstraResult {
@@ -108,6 +113,18 @@ export default defineComponent({
             props.findShortestPath(e);
         }
 
+        const getRandomNode = async () => {
+          const startNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
+          const targetNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
+
+          Promise
+            .all([startNodeReq, targetNodeReq])
+            .then(([startNodeRes, targetNodeRes]) => {
+              localStartNode.value = getNodeFromNumber(startNodeRes.data);
+              localTargetNode.value = getNodeFromNumber(targetNodeRes.data);
+            });
+        }
+
         watch(localStartNode, (newVal: string) => {
             if(newVal && localTargetNode.value) {
                 errorMessage.value = ""
@@ -124,6 +141,7 @@ export default defineComponent({
         return {
             handleClear,
             errorMessage,
+            getRandomNode,  
             localStartNode,
             handleCalculate,
             localTargetNode,
@@ -133,6 +151,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .calculator-form {
+  position: relative;
   padding: 24px;
 }
 .calculator-form-title {
@@ -182,5 +201,19 @@ export default defineComponent({
 }
 .calculator-form-buttons-calculate img {
   margin-left: 5px;
+}
+.calculator-container-random-button {
+  top: 10px;
+  right: 10px;
+  border: none;
+  position: absolute;
+  background: transparent;
+}
+.calculator-container-random {
+  width: 16px;
+  height: 16px;
+}
+.calculator-container-random:hover {
+  cursor: pointer;
 }
 </style>

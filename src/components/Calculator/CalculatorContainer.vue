@@ -1,9 +1,6 @@
 <template>
   <div class="calculator-container">
     <div class="calculator-form-wrapper">
-      <button class="calculator-container-random-button" @click="getRandomNode">
-        <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" />
-      </button>
       <CalculatorForm
         :nodes="nodes"
         :clear="clear"
@@ -26,7 +23,6 @@
   </div>
 </template>
 <script lang="ts">
-import axios from 'axios'
 import { defineComponent, ref, watch } from "vue";
 
 import Result from "./Result.vue";
@@ -69,18 +65,6 @@ export default defineComponent({
       result.value = dijkstra(startNode.value, targetNode.value);
     };
 
-    const getRandomNode = async () => {
-      const startNodeReq = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=26');
-      const targetNodeReq = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=26');
-
-      Promise
-        .all([startNodeReq, targetNodeReq])
-        .then(([startNodeRes, targetNodeRes]) => {
-          startNode.value = ""+startNodeRes.data;
-          targetNode.value = ""+targetNodeRes.data;
-        });
-    }
-
     const clear = () => {
         result.value= { distance: null, path: null }
         startNode.value = "";
@@ -93,7 +77,6 @@ export default defineComponent({
       result,
       startNode,
       targetNode,
-      getRandomNode,
       findShortestPath,
     };
   },
@@ -123,19 +106,5 @@ export default defineComponent({
   background: #f2f3f6;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-}
-.calculator-container-random {
-  width: 16px;
-  height: 16px;
-}
-.calculator-container-random-button {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  background: transparent;
-  border: none;
-}
-.calculator-container-random:hover {
-  cursor: pointer;
 }
 </style>
