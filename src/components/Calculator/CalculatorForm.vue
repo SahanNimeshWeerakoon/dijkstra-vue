@@ -17,7 +17,7 @@
                 </select>
             </div>
             <div class="calculator-form-buttons">
-                <button class="calculator-form-buttons-clear" type="button">Clear</button>
+                <button class="calculator-form-buttons-clear" type="button" @click="handleClear">Clear</button>
                 <button class="calculator-form-buttons-calculate" type="button" @click="findShortestPath">
                     Calculate
                     <img src="../../assets/images/calculator.png" />
@@ -62,8 +62,13 @@
                 required: true
             },
             findShortestPath: {
-                type: Function as () => (e: Event) => void
-            }   
+                type: Function as () => (e: Event) => void,
+                required: true
+            },
+            clear: {
+                type: Function as () => () => void,
+                required: true
+            }
         },
         emits: ['update:startNode', 'update:targetNode'],
         setup(props, { emit }: SetupContext<{
@@ -73,10 +78,17 @@
             const localStartNode = ref(props.startNode);
             const localTargetNode = ref(props.targetNode);
 
+            const handleClear = () => {
+                props.clear();
+                localStartNode.value = ""
+                localTargetNode.value = ""
+            }
+
             watch(localStartNode, (newVal: string) => emit('update:startNode', newVal));
             watch(localTargetNode, (newVal: string) => emit('update:targetNode', newVal));
 
             return {
+                handleClear,
                 localStartNode,
                 localTargetNode,
             }
@@ -112,7 +124,7 @@
         align-items: center;
 
     }
-    .calculator-form-buttons:hover {
+    .calculator-form-buttons button:hover {
         cursor: pointer;
     }
     .calculator-form-buttons-clear {

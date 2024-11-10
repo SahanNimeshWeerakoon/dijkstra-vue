@@ -3,6 +3,7 @@
     <div class="calculator-form-wrapper">
       <CalculatorForm
         :nodes="nodes"
+        :clear="clear"
         :result="result"
         :findShortestPath="findShortestPath"
         v-model:startNode="startNode"
@@ -58,8 +59,15 @@ export default defineComponent({
       result.value = dijkstra(startNode.value, targetNode.value);
     };
 
+    const clear = () => {
+        result.value= { distance: null, path: null }
+        startNode.value = "";
+        targetNode.value = "";
+    }
+
     return {
       nodes,
+      clear,
       result,
       startNode,
       targetNode,
