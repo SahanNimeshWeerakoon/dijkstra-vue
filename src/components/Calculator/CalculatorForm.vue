@@ -4,35 +4,21 @@
         <form>
             <div class="calculator-form-input-wrapper">
                 <label for="from">From Node</label>
-                <select id="from" class="calculator-form-select">
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
-                    <option>E</option>
-                    <option>F</option>
-                    <option>G</option>
-                    <option>H</option>
-                    <option>I</option>
+                <select id="from" v-model="localStartNode" class="calculator-form-select">
+                    <option disabled value="">Slect</option>
+                    <option v-for="node in nodes" :key="node" :value="node">{{ node }}</option>
                 </select>
             </div>
             <div class="calculator-form-input-wrapper">
                 <label for="to">To Node</label>
-                <select id="to" class="calculator-form-select">
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
-                    <option>E</option>
-                    <option>F</option>
-                    <option>G</option>
-                    <option>H</option>
-                    <option>I</option>
+                <select id="to" v-model="localTargetNode" class="calculator-form-select">
+                    <option disabled value="">Select</option>
+                    <option v-for="node in nodes" :key="node" :value="node">{{ node }}</option>
                 </select>
             </div>
             <div class="calculator-form-buttons">
-                <button class="calculator-form-buttons-clear">Clear</button>
-                <button class="calculator-form-buttons-calculate">
+                <button class="calculator-form-buttons-clear" type="button">Clear</button>
+                <button class="calculator-form-buttons-calculate" type="button" @click="findShortestPath">
                     Calculate
                     <img src="../../assets/images/calculator.png" />
                 </button>
@@ -41,22 +27,63 @@
     </div>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import {
+        ref,
+        watch,
+        PropType,
+        defineComponent,
+        type Ref,
+        type SetupContext,
+    } from 'vue';
+
+    // TODO - get this interface to seperate file
+    interface DijkstraResult {
+        distance: number | null;
+        path: string[] | null;
+    }
 
     export default defineComponent({
         name: 'CalculatorForm',
-        props: {},
+        props: {
+            nodes: {
+                type: Array as PropType<string[]>,
+                required: true
+            },
+            startNode: {
+                type: String,
+                required: true
+            },
+            targetNode: {
+                type: String,
+                required: true
+            },
+            result: {
+                type: Object as PropType<DijkstraResult>,
+                required: true
+            },
+            findShortestPath: {
+                type: Function as () => (e: Event) => void
+            }   
+        },
+        emits: ['update:startNode', 'update:targetNode'],
+        setup(props, { emit }: SetupContext<{
+            'update:startNode': (value: string) => void,
+            'update:targetNode': (value: string) => void,
+        }>) {
+            const localStartNode = ref(props.startNode);
+            const localTargetNode = ref(props.targetNode);
+
+            watch(localStartNode, (newVal: string) => emit('update:startNode', newVal));
+            watch(localTargetNode, (newVal: string) => emit('update:targetNode', newVal));
+
+            return {
+                localStartNode,
+                localTargetNode,
+            }
+        }
     });
 </script>
 <style scoped>
-    .calculator-form,
-    .calculator-form form,
-    .calculator-form form div, 
-    .calculator-form form div label, 
-    .calculator-form form div select {
-        width: 100%;
-    }
-
     .calculator-form {
         padding: 24px;
     }
@@ -83,6 +110,10 @@
     .calculator-form-buttons {
         display: flex;
         align-items: center;
+
+    }
+    .calculator-form-buttons:hover {
+        cursor: pointer;
     }
     .calculator-form-buttons-clear {
         background: transparent;
