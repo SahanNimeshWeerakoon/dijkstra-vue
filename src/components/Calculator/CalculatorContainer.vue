@@ -1,6 +1,9 @@
 <template>
   <div class="calculator-container">
     <div class="calculator-form-wrapper">
+      <button class="calculator-container-random-button">
+        <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" />
+      </button>
       <CalculatorForm
         :nodes="nodes"
         :clear="clear"
@@ -46,7 +49,18 @@ export default defineComponent({
     const startNode = ref<string>("");
     const targetNode = ref<string>("");
     const result = ref<DijkstraResult>({ distance: null, path: null });
-    const nodes = ref<string[]>(["A", "B", "C", "D", "E", "F", "G", "H", "I"]);
+    // const nodes = ref<string[]>([
+    //   {value: "A", label: "A"},
+    //   {value: "B", label: "B"},
+    //   {value: "C", label: "C"},
+    //   {value: "D", label: "D"},
+    //   {value: "E", label: "E"},
+    //   {value: "F", label: "F"},
+    //   {value: "G", label: "G"},
+    //   {value: "H", label: "H"},
+    //   {value: "I", label: "I"},
+    // ]);
+    const nodes = ref<string[]>(["A","B","C","D","E","F","G","H","I"]);
 
     const findShortestPath = (e: any) => {
       e.preventDefault();
@@ -87,9 +101,26 @@ export default defineComponent({
 .calculator-result-wrapper {
   width: 50%;
 }
+.calculator-form-wrapper {
+  position: relative;
+}
 .calculator-result-wrapper {
   background: #f2f3f6;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
+}
+.calculator-container-random {
+  width: 16px;
+  height: 16px;
+}
+.calculator-container-random-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: transparent;
+  border: none;
+}
+.calculator-container-random:hover {
+  cursor: pointer;
 }
 </style>

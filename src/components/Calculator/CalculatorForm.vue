@@ -8,6 +8,7 @@
           <option disabled value="">Slect</option>
           <option v-for="node in nodes" :key="node" :value="node">{{ node }}</option>
         </select>
+        <!-- <CustomDropdown :list="nodes" /> -->
       </div>
       <div class="calculator-form-input-wrapper">
         <label for="to">To Node</label>
@@ -15,6 +16,7 @@
           <option disabled value="">Select</option>
           <option v-for="node in nodes" :key="node" :value="node">{{ node }}</option>
         </select>
+        <!-- <CustomDropdown :list="nodes" /> -->
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
       <div class="calculator-form-buttons">
@@ -42,6 +44,8 @@ import {
     type Ref,
     type SetupContext,
 } from 'vue';
+import CustomDropdown from '../CustomDropdown/CustomDropdown.vue'
+import { ListItem } from '../CustomDropdown/types.ts'
 
 // TODO - get this interface to seperate file
 interface DijkstraResult {
@@ -51,14 +55,12 @@ interface DijkstraResult {
 
 export default defineComponent({
     name: 'CalculatorForm',
-    data() {
-        return {
-
-        }
+    components: {
+      CustomDropdown
     },
     props: {
         nodes: {
-            type: Array as PropType<string[]>,
+            type: Array as PropType<{ListItem}[]>,
             required: true
         },
         startNode: {
