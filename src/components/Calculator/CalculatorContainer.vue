@@ -48,14 +48,8 @@ export default defineComponent({
     const result = ref<DijkstraResult>({ distance: null, path: null });
     const nodes = ref<string[]>(["A", "B", "C", "D", "E", "F", "G", "H", "I"]);
 
-    watch(startNode, (val: string) => {
-      // not logging console
-      console.log(val);
-    });
-
     const findShortestPath = (e: any) => {
       e.preventDefault();
-      console.log(dijkstra(startNode.value, targetNode.value));
       result.value = dijkstra(startNode.value, targetNode.value);
     };
 
