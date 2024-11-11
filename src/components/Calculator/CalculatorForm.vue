@@ -123,7 +123,21 @@ export default defineComponent({
           Promise
             .all([startNodeReq, targetNodeReq])
             .then(([startNodeRes, targetNodeRes]) => {
-              if(getNodeFromNumber(startNodeRes.data)) {
+              const startNodeFromNumber = getNodeFromNumber(startNodeRes.data);
+              const targetNodeFromNumber = getNodeFromNumber(targetNodeRes.data);
+              if(startNodeFromNumber === targetNodeFromNumber) {
+                Toastify({
+                  text: "Got the same value. Please try again",
+                  duration: 3000,
+                  close: true,
+                  style: {
+                    background: "#c41e3a",
+                  },
+                }).showToast();
+                return;
+              }
+
+              if(startNodeFromNumber) {
                 localStartNode.value = getNodeFromNumber(startNodeRes.data);
               } else {
                 Toastify({
@@ -136,7 +150,7 @@ export default defineComponent({
                 }).showToast();
               }
 
-              if(getNodeFromNumber(targetNodeRes.data)) {
+              if(targetNodeFromNumber) {
                 localTargetNode.value = getNodeFromNumber(targetNodeRes.data);
               } else {
                 Toastify({
