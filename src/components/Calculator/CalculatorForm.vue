@@ -48,6 +48,8 @@ import {
     type SetupContext,
 } from 'vue';
 import axios from 'axios'
+import Toastify from 'toastify-js'
+
 import CustomDropdown from '../CustomDropdown/CustomDropdown.vue'
 import { ListItem } from '../CustomDropdown/types.ts'
 import { getNodeFromNumber } from '../../utils/common.js'
@@ -116,12 +118,41 @@ export default defineComponent({
         const getRandomNode = async () => {
           const startNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
           const targetNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
-
+          
           Promise
             .all([startNodeReq, targetNodeReq])
             .then(([startNodeRes, targetNodeRes]) => {
-              localStartNode.value = getNodeFromNumber(startNodeRes.data);
-              localTargetNode.value = getNodeFromNumber(targetNodeRes.data);
+              if(getNodeFromNumber(startNodeRes.data)) {
+                localStartNode.value = getNodeFromNumber(startNodeRes.data);
+              } else {
+                Toastify({
+                  text: "Getting start node failed. Please try again.",
+                  duration: 3000,
+                  close: true,
+                  stopOnFocus: true, // Prevents dismissing of toast on hover
+                  style: {
+                    background: "#c41e3a",
+                  },
+                  onClick: function(){} // Callback after click
+                }).showToast();
+              }
+
+              if(getNodeFromNumber(targetNodeRes.data)) {
+                localTargetNode.value = getNodeFromNumber(targetNodeRes.data);
+              } else {
+                Toastify({
+                  text: "Getting target node failed. Please try again.",
+                  duration: 3000,
+                  close: true,
+                  gravity: "top", // `top` or `bottom`
+                  position: "left", // `left`, `center` or `right`
+                  stopOnFocus: true, // Prevents dismissing of toast on hover
+                  style: {
+                    background: "#c41e3a",
+                  },
+                  onClick: function(){} // Callback after click
+                }).showToast();
+              }
             });
         }
 
