@@ -1,7 +1,7 @@
 <template>
   <div class="calculator-form">
     <button class="calculator-container-random-button" @click="getRandomNode">
-      <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" />
+      <img src="../../assets/images/random.png" alt="Get random nodes" title="Get random nodes" class="calculator-container-random" :class="{ rotate: isLoading }" />
     </button>
     <p class="calculator-form-title">Select Path</p>
     <form>
@@ -96,9 +96,10 @@ export default defineComponent({
         'update:startNode': (value: string) => void,
         'update:targetNode': (value: string) => void,
     }>) {
-        const errorMessage = ref("");
-        const localStartNode = ref(props.startNode);
-        const localTargetNode = ref(props.targetNode);
+        const errorMessage = ref<string>("");
+        const isLoading = ref<boolean>(false);
+        const localStartNode = ref<string>(props.startNode);
+        const localTargetNode = ref<string>(props.targetNode);
 
         const handleClear = () => {
             props.clear();
@@ -118,7 +119,7 @@ export default defineComponent({
         const getRandomNode = async () => {
           const startNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
           const targetNodeReq: number = axios.get('https://thingproxy.freeboard.io/fetch/http://2g.be/twitch/randomnumber.php?=defstart=1&defend=9');
-          
+          isLoading.value = true;
           Promise
             .all([startNodeReq, targetNodeReq])
             .then(([startNodeRes, targetNodeRes]) => {
@@ -129,11 +130,9 @@ export default defineComponent({
                   text: "Getting start node failed. Please try again.",
                   duration: 3000,
                   close: true,
-                  stopOnFocus: true, // Prevents dismissing of toast on hover
                   style: {
                     background: "#c41e3a",
                   },
-                  onClick: function(){} // Callback after click
                 }).showToast();
               }
 
@@ -144,15 +143,24 @@ export default defineComponent({
                   text: "Getting target node failed. Please try again.",
                   duration: 3000,
                   close: true,
-                  gravity: "top", // `top` or `bottom`
-                  position: "left", // `left`, `center` or `right`
-                  stopOnFocus: true, // Prevents dismissing of toast on hover
                   style: {
                     background: "#c41e3a",
                   },
-                  onClick: function(){} // Callback after click
                 }).showToast();
               }
+            })
+            .catch(() => {
+              Toastify({
+                  text: "Something went wrong. Please try again.",
+                  duration: 3000,
+                  close: true,
+                  style: {
+                    background: "#c41e3a",
+                  },
+                }).showToast();
+            })
+            .finally(() => {
+              isLoading.value = false;
             });
         }
 
@@ -170,6 +178,7 @@ export default defineComponent({
         });
 
         return {
+            isLoading,
             handleClear,
             errorMessage,
             getRandomNode,  
